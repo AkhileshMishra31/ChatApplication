@@ -1,0 +1,66 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id           String   @id @default(uuid()) 
+  username     String
+  email        String   @unique
+  password     String
+  phone_number String
+  profile_picture     String?  // Optional field for profile picture
+  country      String   // Field for user's country
+  createdAt    DateTime @default(now())              
+  updatedAt    DateTime @updatedAt  
+
+  OTPRequest  OTPRequest[]
+  UserActivityStatus UserActivityStatus?
+}
+
+model OTPRequest {
+  id            String   @id @default(uuid()) 
+  otp           String   
+  email         String   
+  userId        String?  
+  type          OTPType  // Type of OTP (e.g., SIGNUP, RESET_PASSWORD)
+  status        OTPStatus // Status of OTP (e.g., PENDING, VERIFIED, EXPIRED)
+  createdAt     DateTime @default(now())  
+  updatedAt     DateTime @updatedAt
+  expiresAt     DateTime 
+  verifiedAt    DateTime? 
+  user          User?    @relation(fields: [userId], references: [id],  onDelete: Cascade)
+}
+
+
+model UserActivityStatus {
+  id                        String        @id @default(uuid())
+  is_signup_email_verified  Boolean       @default(false)      
+  status                    UserStatus    @default(ONLINE)     
+  userId String  @unique 
+  user   User @relation(fields: [userId], references: [id], onDelete:Cascade)
+  createdAt                 DateTime     @default(now())      
+  updatedAt                 DateTime     @updatedAt             
+}
+
+
+enum OTPType {
+  SIGNUP
+  RESET_PASSWORD
+}
+
+enum OTPStatus {
+  PENDING
+  VERIFIED
+  EXPIRED
+}
+
+enum UserStatus{
+  ONLINE
+  OFFLINE
+}
+
