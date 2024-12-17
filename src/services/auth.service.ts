@@ -1,11 +1,12 @@
 
 import prisma from "../utils/db";
 import { AppError } from "../utils/AppError";
-import { SignupInput } from "../interfaces/auth.interface";
+import { LoginInput, SignupInput } from "../interfaces/auth.interface";
 import { user_service } from "./user.service";
 import { ERROR_MESSAGES } from "../common/ErrorMessages";
 import { HTTP_CODES } from "../common/StatusCodes";
 import { otp_service } from "./otp.service";
+import { comparePassword, generateAccessToken, generateRefreshToken } from "../utils/auth.utility";
 
 
 export const signup = async (user_data: SignupInput) => {
@@ -37,7 +38,28 @@ export const signup = async (user_data: SignupInput) => {
 };
 
 
+export const login = async (user_data: LoginInput) => {
+    const user = await user_service.findUser({ email: user_data.email });
+    if (!user) {
+        throw new AppError(ERROR_MESSAGES.USER_NOT_FOUND, HTTP_CODES.INTERNAL_SERVER_ERROR)
+    }
+
+    if (!user.UserActivityStatus?.is_signup_email_verified) {
+        throw new AppError(ERROR_MESSAGES.USER_NOT_FOUND, HTTP_CODES.UNAUTHORIZED)
+    }
+    if (!comparePassword(user_data.password, user.password)) {
+        throw new AppError(ERROR_MESSAGES.INVALID_PASSWORD, HTTP_CODES.UNAUTHORIZED)
+    }
+    const access_token = await generateAccessToken(user.id);
+    const refresh_token = await generateRefreshToken(user.id);
+    return {
+        access_token,
+        refresh_token
+    }
+};
+
 
 export const auth_service = {
     signup,
+    login
 };

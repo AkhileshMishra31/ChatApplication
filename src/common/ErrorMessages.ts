@@ -1,5 +1,6 @@
 
 export const ERROR_MESSAGES = {
+    INVALID_PASSWORD:"Invalid password provided.",
     INVALID_INPUT: "Invalid input provided.",
     USER_NOT_FOUND: "User not found.",
     USER_ALREADY_EXIST: "User already exist.",

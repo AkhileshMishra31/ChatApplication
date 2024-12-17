@@ -11,3 +11,8 @@ export interface SignupInput {
 export interface IcreateUser extends SignupInput{
 
 }
+
+export interface LoginInput {
+    email: string;
+    password: string;
+}

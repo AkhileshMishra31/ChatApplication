@@ -6,8 +6,8 @@ import otpRoutes from "./otp.route"
 
 const router = express.Router();
 
-router.use("/api", userRoutes);
-router.use("/api", authRoutes);
-router.use("/api", otpRoutes)
+router.use(userRoutes);
+router.use(authRoutes);
+router.use(otpRoutes);
 
 export default router;

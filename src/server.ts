@@ -1,6 +1,6 @@
 import express, { Express } from "express";
 import dotenv from "dotenv";
-import routes from "./routes";  // Import all routes
+import routes from "./routes";  
 import { errorHandler } from "./utils/errorHandler";
 
 
@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json())
 
-app.use(routes);
+app.use("/api/v1", routes);
 
 app.use(errorHandler)
 

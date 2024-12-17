@@ -1,6 +1,6 @@
 
 import { Request, Response } from 'express';
-import { validateSignupInput } from '../validations/auth.validation';
+import { validateLoginInput, validateSignupInput } from '../validations/auth.validation';
 import { AppError } from '../utils/AppError';
 import { catchAsync } from '../utils/common';
 import { auth_service } from '../services/auth.service';
@@ -20,8 +20,25 @@ export const signup = async (req: Request, res: Response) => {
         data: user
     })
 };
+export const login = async (req: Request, res: Response) => {
+    const { value, error } = validateLoginInput(req.body)
+    if (error) {
+        throw new AppError(error.message, 400)
+    }
+    const user = await auth_service.login(value)
+    res.cookie("token", user.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 1000 * 60 * 60 * 24,
+    });
+    return res.status(HTTP_CODES.CREATED).json({
+        message: SUCCESS_MESSAGES.LOGIN_SUCCESS,
+        data: user
+    })
+};
 
 
 export const auth_controller = {
     signup: catchAsync(signup),
+    login: catchAsync(login),
 };

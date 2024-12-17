@@ -4,6 +4,7 @@ import { IcreateUser } from "../interfaces/auth.interface";
 import { ERROR_MESSAGES } from "../common/ErrorMessages";
 import { HTTP_CODES } from "../common/StatusCodes";
 import { user_activiy_service } from "./user_activity.service";
+import { hashPassword } from "../utils/auth.utility";
 
 const { user: User } = prisma;
 
@@ -51,6 +52,10 @@ const getUser = async (user_id: string) => {
 }
 
 const signUpUser = async (payload: IcreateUser) => {
+    payload = {
+        ...payload,
+        password: await hashPassword(payload.password)
+    }
     const user = await createUser(payload)
     if (!user) {
         throw new AppError(ERROR_MESSAGES.USER_CREATION_FAILED, HTTP_CODES.INTERNAL_SERVER_ERROR)

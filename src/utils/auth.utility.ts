@@ -33,3 +33,22 @@ export const generateAccessToken = async (userId: string): Promise<string> => {
         });
     });
 };
+export const generateRefreshToken= async (userId: string): Promise<string> => {
+    const payload = {
+        id: userId, 
+    };
+
+    const secretKey = process.env.JWT_SECRET || "your_default_secret_key"; 
+    const options = {
+        expiresIn: '7h', 
+    };
+    return new Promise((resolve, reject) => {
+        jwt.sign(payload, secretKey, options, (err, token) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(token as string);
+            }
+        });
+    });
+};
