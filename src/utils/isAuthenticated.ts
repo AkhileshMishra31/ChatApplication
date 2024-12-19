@@ -1,18 +1,25 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { verifyRefreshToken } from "../utils/auth.utility";
+import { AppError } from "../utils/AppError";
+import { ERROR_MESSAGES } from "../common/ErrorMessages";
+import { HTTP_CODES } from "../common/StatusCodes";
+import { AuthRequest, TokenPayload } from "../interfaces/user.interface";
 
 
-export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-    // try {
-    //     const token = req.header("Authorization")?.replace("Bearer ", "");
-    //     if (!token) {
-    //         return res.status(401).json({ message: "Unauthorized: No token provided" });
-    //     }
-    //     const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-    //     req.user = decoded;
-    //     next();
-    // } catch (error) {
-    //     console.error("Authentication failed:", error);
-    //     return res.status(401).json({ message: "Unauthorized: Invalid token" });
-    // }
+const isAuthenticated = async (req: Request, res: Response, next: NextFunction)  => {
+    try {
+        const token = req.header("Authorization")?.replace("Bearer ", "");
+        if (!token) {
+            res.status(401).json({ message: "Unauthorized: No token provided" });
+            return;
+        }
+        const decoded= await verifyRefreshToken(token as string);
+        req.user = decoded as TokenPayload;  
+        return next();
+    } catch (error) {
+       throw new AppError(ERROR_MESSAGES.INVALID_TOKEN, HTTP_CODES.UNAUTHORIZED)
+    }
 };
+
+export default isAuthenticated;

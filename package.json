@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exec ts-node src/server.ts",
+    "dev": "nodemon --files src/server.ts",
     "build": "tsc",
     "prod": "rimraf dist && npm run build",
     "start": "node dist/server.js"

@@ -20,5 +20,6 @@ export const ERROR_MESSAGES = {
     USER_ACTIVITY_FAILED: "User Activity failed to update",
     TOKEN_MISSING: "Token is missing",
     INVALID_REFRESH_TOKEN:"Invalid refresh token provided.",
+    INVALID_TOKEN:"Invalid token provided.",
 };
 

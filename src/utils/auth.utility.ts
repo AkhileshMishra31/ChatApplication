@@ -1,10 +1,12 @@
 // utils/hashPassword.ts
 import bcrypt from 'bcrypt';
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken"
+import jwt, { JwtPayload } from "jsonwebtoken"
 import { ERROR_MESSAGES } from '../common/ErrorMessages';
 import { HTTP_CODES } from '../common/StatusCodes';
 import { AppError } from './AppError';
+import { TokenPayload } from '../interfaces/user.interface';
+import { User } from '@prisma/client';
 dotenv.config();
 
 export const hashPassword = async (password: string): Promise<string> => {
@@ -17,15 +19,16 @@ export const comparePassword = async (plainPassword: string, hashedPassword: str
 };
 
 
-export const generateAccessToken = async (userId: string): Promise<string> => {
-    const payload = {
-        id: userId,
+// Generate an access token with user details
+export const generateAccessToken = async (user: User): Promise<string> => {
+    const payload: TokenPayload = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
     };
+    const secretKey = process.env.JWT_SECRET || 'your_default_secret_key';
+    const options = { expiresIn: '1h' };
 
-    const secretKey = process.env.JWT_SECRET || "your_default_secret_key";
-    const options = {
-        expiresIn: '1h',
-    };
     return new Promise((resolve, reject) => {
         jwt.sign(payload, secretKey, options, (err, token) => {
             if (err) {
@@ -36,15 +39,17 @@ export const generateAccessToken = async (userId: string): Promise<string> => {
         });
     });
 };
-export const generateRefreshToken = async (userId: string): Promise<string> => {
-    const payload = {
-        id: userId,
-    };
 
-    const secretKey = process.env.JWT_SECRET || "your_default_secret_key";
-    const options = {
-        expiresIn: '7h',
+// Generate a refresh token with user details
+export const generateRefreshToken = async (user: User): Promise<string> => {
+    const payload: TokenPayload = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
     };
+    const secretKey = process.env.JWT_SECRET || 'your_default_secret_key';
+    const options = { expiresIn: '7h' };
+
     return new Promise((resolve, reject) => {
         jwt.sign(payload, secretKey, options, (err, token) => {
             if (err) {

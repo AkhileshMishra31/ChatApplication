@@ -31,6 +31,11 @@ export const login = async (req: Request, res: Response) => {
         secure: process.env.NODE_ENV === "production",
         maxAge: 1000 * 60 * 60 * 24,
     });
+    res.cookie("token", user.refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
     return res.status(HTTP_CODES.CREATED).json({
         message: SUCCESS_MESSAGES.LOGIN_SUCCESS,
         data: user

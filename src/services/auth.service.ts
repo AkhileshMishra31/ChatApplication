@@ -51,8 +51,8 @@ export const login = async (user_data: LoginInput) => {
     if (!comparePassword(user_data.password, user.password)) {
         throw new AppError(ERROR_MESSAGES.INVALID_PASSWORD, HTTP_CODES.UNAUTHORIZED)
     }
-    const access_token = await generateAccessToken(user.id);
-    const refresh_token = await generateRefreshToken(user.id);
+    const access_token = await generateAccessToken(user);
+    const refresh_token = await generateRefreshToken(user);
 
     await user_session_service.createUserSession(user.id, refresh_token);
 
@@ -74,8 +74,7 @@ const refreshToken = async (refresh_token: string) => {
     if (!verify_token) {
         throw new AppError(ERROR_MESSAGES.INVALID_REFRESH_TOKEN, HTTP_CODES.BAD_REQUEST);
     }
-
-    const access_token = await generateAccessToken(verify_token.id);
+    const access_token = await generateAccessToken(verify_token as any);
 
     return { access_token };
 };
