@@ -6,7 +6,8 @@ import { user_service } from "./user.service";
 import { ERROR_MESSAGES } from "../common/ErrorMessages";
 import { HTTP_CODES } from "../common/StatusCodes";
 import { otp_service } from "./otp.service";
-import { comparePassword, generateAccessToken, generateRefreshToken } from "../utils/auth.utility";
+import { comparePassword, generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/auth.utility";
+import { user_session_service } from "./user_session.service";
 
 
 export const signup = async (user_data: SignupInput) => {
@@ -52,14 +53,36 @@ export const login = async (user_data: LoginInput) => {
     }
     const access_token = await generateAccessToken(user.id);
     const refresh_token = await generateRefreshToken(user.id);
+
+    await user_session_service.createUserSession(user.id, refresh_token);
+
     return {
         access_token,
         refresh_token
     }
 };
 
+const refreshToken = async (refresh_token: string) => {
+    if (!refresh_token) {
+        throw new AppError(ERROR_MESSAGES.TOKEN_MISSING, HTTP_CODES.BAD_REQUEST);
+    }
+    const user_session = await user_session_service.getUserSession(refresh_token);
+    if (!user_session) {
+        throw new AppError(ERROR_MESSAGES.INVALID_REFRESH_TOKEN, HTTP_CODES.BAD_REQUEST);
+    }
+    const verify_token = await verifyRefreshToken(refresh_token);
+    if (!verify_token) {
+        throw new AppError(ERROR_MESSAGES.INVALID_REFRESH_TOKEN, HTTP_CODES.BAD_REQUEST);
+    }
+
+    const access_token = await generateAccessToken(verify_token.id);
+
+    return { access_token };
+};
+
 
 export const auth_service = {
     signup,
-    login
+    login,
+    refreshToken
 };

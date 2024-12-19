@@ -93,3 +93,24 @@ export const validateLoginInput = (value: any) => {
 };
 
 
+export const validateToken = (value: any) => {
+    const tokenSchema = Joi.object({
+        token: Joi.string().required()
+            .messages({
+                'string.base': 'Token should be a valid string',
+                'string.empty': 'Token is required',
+                'any.required': 'Token is required'
+            }),
+    }).messages({
+        'string.base': '{{#label}} should be a valid string',
+        'string.empty': '{{#label}} is required',
+        'string.email': 'Please provide a valid {{#label}}',
+        'string.min': '{{#label}} should have at least {{#limit}} characters',
+        'string.max': '{{#label}} should have at most {{#limit}} characters',
+        'any.required': '{{#label}} is required',
+    })
+
+    return tokenSchema.validate(value, { abortEarly: false });
+};
+
+
