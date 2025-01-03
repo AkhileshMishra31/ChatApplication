@@ -63,7 +63,7 @@ export const generateRefreshToken = async (user: User): Promise<string> => {
 
 export const verifyRefreshToken = async (
     token: string
-): Promise<{ id: string }> => {
+): Promise<TokenPayload> => {
     const secretKey = process.env.JWT_SECRET || "your_default_secret_key";
 
     return new Promise((resolve, reject) => {
@@ -73,7 +73,7 @@ export const verifyRefreshToken = async (
                     new AppError(ERROR_MESSAGES.INVALID_REFRESH_TOKEN, HTTP_CODES.UNAUTHORIZED)
                 );
             } else {
-                resolve(decoded as { id: string });
+                resolve(decoded as TokenPayload);
             }
         });
     });
