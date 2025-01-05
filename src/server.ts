@@ -5,8 +5,9 @@ import { errorHandler } from "./utils/errorHandler";
 import "express-async-errors"
 import logger from "./config/logger";
 import { createServer } from "http";
-import { SocketInit } from "./sockets";
+// import { SocketInit } from "./sockets";
 import "./redis/index"
+import { SocketInit } from "./sockets";
 
 
 dotenv.config();
