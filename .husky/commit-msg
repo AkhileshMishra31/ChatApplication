@@ -1,0 +1,10 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+npx --no-install commitlint --edit $1 || { 
+  echo "🛑 Commit message is not in the correct format!";
+  echo "Please follow the recommended pattern:";
+  echo "- Use the format: <type>: <description>";
+  echo "- Available types: feat, fix, docs, style, refactor, perf, test, build, ci";
+  exit 1;
+}

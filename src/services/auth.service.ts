@@ -79,9 +79,27 @@ const refreshToken = async (refresh_token: string) => {
     return { access_token };
 };
 
+export const logout = async (refresh_token: string) => {
+    if (!refresh_token) {
+        throw new AppError(ERROR_MESSAGES.TOKEN_MISSING, HTTP_CODES.BAD_REQUEST);
+    }
+
+    const user_session = await user_session_service.getUserSession(refresh_token);
+    if (!user_session) {
+        throw new AppError(ERROR_MESSAGES.INVALID_REFRESH_TOKEN, HTTP_CODES.UNAUTHORIZED);
+    }
+
+    const is_deleted = await user_session_service.deleteUserSession(refresh_token);
+    if (!is_deleted) {
+        throw new AppError(ERROR_MESSAGES.LOGOUT_FAILED, HTTP_CODES.INTERNAL_SERVER_ERROR);
+    }
+
+    return { message: "Successfully logged out" };
+};
 
 export const auth_service = {
     signup,
     login,
-    refreshToken
+    refreshToken,
+    logout
 };

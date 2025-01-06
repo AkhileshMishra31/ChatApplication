@@ -1,6 +1,6 @@
 
 export const ERROR_MESSAGES = {
-    INVALID_PASSWORD:"Invalid password provided.",
+    INVALID_PASSWORD: "Invalid password provided.",
     INVALID_INPUT: "Invalid input provided.",
     USER_NOT_FOUND: "User not found.",
     USER_ALREADY_EXIST: "User already exist.",
@@ -19,7 +19,11 @@ export const ERROR_MESSAGES = {
     USER_ACTIVITY_NOT_FOUND: "User Activity not found",
     USER_ACTIVITY_FAILED: "User Activity failed to update",
     TOKEN_MISSING: "Token is missing",
-    INVALID_REFRESH_TOKEN:"Invalid refresh token provided.",
-    INVALID_TOKEN:"Invalid token provided.",
+    INVALID_REFRESH_TOKEN: "Invalid refresh token provided.",
+    INVALID_TOKEN: "Invalid token provided.",
+    LOGOUT_FAILED: "Logout failed. Please try again later.",
+    TWOFA_ALREADY_ENABLED: "Two-factor authentication is already enabled for this account.",
+    TWOFA_CREATION_FAILED: "Failed to create two-factor authentication. Please try again later.",
+    TWOFA_NOT_ENABLED: "Two-factor authentication is not enabled for this account."
 };
 

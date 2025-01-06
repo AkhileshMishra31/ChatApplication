@@ -4,7 +4,7 @@ import { verifyRefreshToken } from "../utils/auth.utility";
 import { AppError } from "../utils/AppError";
 import { ERROR_MESSAGES } from "../common/ErrorMessages";
 import { HTTP_CODES } from "../common/StatusCodes";
-import { AuthRequest, TokenPayload } from "../interfaces/user.interface";
+import { TokenPayload } from "../interfaces/user.interface";
 
 
 const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {

@@ -8,6 +8,8 @@ import { createServer } from "http";
 // import { SocketInit } from "./sockets";
 import "./redis/index"
 import { SocketInit } from "./sockets";
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 
 dotenv.config();
@@ -18,6 +20,12 @@ const PORT = process.env.PORT || 3000;
 const httpServer = createServer(app);
 
 app.use(express.json())
+
+app.use(cors());
+
+
+app.use(cookieParser());
+
 
 app.use("/api/v1", routes);
 

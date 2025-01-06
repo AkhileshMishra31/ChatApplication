@@ -20,7 +20,18 @@ const createUserSession = async (user_id: string, refresh_token: string) => {
 }
 
 
+export const deleteUserSession = async (refresh_token: string) => {
+  const result = await UserSessions.deleteMany({
+    where: { refresh_token: refresh_token },
+  });
+  return !!result;
+
+};
+
+
+
 export const user_session_service = {
   getUserSession,
-  createUserSession
+  createUserSession,
+  deleteUserSession
 };
