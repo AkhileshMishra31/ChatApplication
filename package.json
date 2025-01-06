@@ -6,7 +6,8 @@
     "dev": "nodemon --files src/server.ts",
     "build": "tsc",
     "prod": "rimraf dist && npm run build",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
