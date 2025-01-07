@@ -17,6 +17,10 @@ export interface TokenPayload  {
     email: string;
 }
 
+export interface Iuser extends TokenPayload {
+    
+}
+
 
 export interface AuthRequest extends Request {
     user:User
