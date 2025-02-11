@@ -6,11 +6,11 @@ export const mockOtpRequestId = faker.string.uuid();
 export const mockRefreshTokenId = faker.string.uuid();
 
 export const signupInput = {
-    username: "testUser",
-    email: "test@example.com",
-    password: "Password123!",
-    phone_number: "123456789",
-    country: "TestCountry",
+  username: "testUser",
+  email: "test@example.com",
+  password: "Password123!",
+  phone_number: "123456789",
+  country: "TestCountry",
 };
 export function mockUser() {
   return {
@@ -18,7 +18,7 @@ export function mockUser() {
     username: "testUser",
     email: "test@example.com",
     password: "Password123!",
-    phone_number: "1234567891", 
+    phone_number: "1234567891",
     country: "TestCountry",
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -40,7 +40,7 @@ export function mockUser() {
         status: "PENDING",
         createdAt: new Date(),
         updatedAt: new Date(),
-        expiresAt: new Date(Date.now() + 15 * 60 * 1000), 
+        expiresAt: new Date(Date.now() + 15 * 60 * 1000),
         verifiedAt: null,
       },
     ],
@@ -53,14 +53,14 @@ export function mockUserforemailverification() {
     username: "testUser",
     email: "test@example.com",
     password: "Password123!",
-    phone_number: "1234567891", 
+    phone_number: "1234567891",
     country: "TestCountry",
     createdAt: new Date(),
     updatedAt: new Date(),
     UserActivityStatus: {
       id: mockUserActivityStatusId,
       is_signup_email_verified: false,
-      status: "OFFLINE",  
+      status: "OFFLINE",
       userId: mockUserId,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -75,7 +75,7 @@ export function mockUserforemailverification() {
         status: "PENDING",
         createdAt: new Date(),
         updatedAt: new Date(),
-        expiresAt: new Date(Date.now() + 15 * 60 * 1000), 
+        expiresAt: new Date(Date.now() + 15 * 60 * 1000),
         verifiedAt: null,
       },
     ],
@@ -83,18 +83,18 @@ export function mockUserforemailverification() {
 }
 
 
-export const LoginInput={
-  email:"test@example.com",
-  password:"Password123!"
+export const LoginInput = {
+  email: "test@example.com",
+  password: "Password123!"
 }
 
-export function  mockLoginUser(){
+export function mockLoginUser() {
   return {
     id: mockUserId,
     username: "testUser",
     email: "test@example.com",
     password: "Password123!",
-    phone_number: "1234567891", 
+    phone_number: "1234567891",
     country: "TestCountry",
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -116,7 +116,7 @@ export function  mockLoginUser(){
         status: "VERIFIED",
         createdAt: new Date(),
         updatedAt: new Date(),
-        expiresAt: new Date(Date.now() + 15 * 60 * 1000), 
+        expiresAt: new Date(Date.now() + 15 * 60 * 1000),
         verifiedAt: null,
       },
     ],
@@ -124,14 +124,26 @@ export function  mockLoginUser(){
 }
 
 
-export function mocklogoutSession(){  
+export function mocklogoutSession() {
   return {
-    id:mockRefreshTokenId ,        
-    refresh_token :"refresh_token",
+    id: mockRefreshTokenId,
+    refresh_token: "refresh_token",
     createdAt: new Date(),
-    updatedAt: new Date(),  
-    userId : mockUserId
+    updatedAt: new Date(),
+    userId: mockUserId
   }
 }
 
 
+export function mockRefreshUser() {
+  return {
+    ...(mocklogoutSession())
+  }
+}
+
+
+export const TokenUser = {
+  id: "123",
+  username: "testuser",
+  email: "test@example.com",
+};

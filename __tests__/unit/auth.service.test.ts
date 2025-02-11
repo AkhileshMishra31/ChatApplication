@@ -7,7 +7,7 @@ import { AppError } from "../../src/utils/AppError";
 import { ERROR_MESSAGES } from "../../src/common/ErrorMessages";
 import jwt from "jsonwebtoken";
 import { user_session_service } from '../../src/services/user_session.service';
-import { LoginInput, mockLoginUser, mocklogoutSession, mockUser, mockUserforemailverification, mockUserId, signupInput } from '../mocks/auth.mocks';
+import { LoginInput, mockLoginUser, mocklogoutSession, mockRefreshUser, mockUser, mockUserforemailverification, mockUserId, signupInput, TokenUser } from '../mocks/auth.mocks';
 
 jest.mock('../../src/services/user.service');
 jest.mock('../../src/services/otp.service');
@@ -18,6 +18,7 @@ jest.mock('../../src/utils/auth.utility', () => ({
     comparePassword: jest.fn(),
     generateAccessToken: jest.fn(),
     generateRefreshToken: jest.fn(),
+    verifyRefreshToken: jest.fn(),
 }))
 
 
@@ -200,21 +201,102 @@ describe('auth_service', () => {
         });
     });
 
+    describe("refreshToken", () => {
+        it("should refresh token successfully", async () => {
+            (user_session_service.getUserSession as jest.Mock).mockResolvedValueOnce(mockRefreshUser);
+            (verifyRefreshToken as jest.Mock).mockResolvedValueOnce(TokenUser);
+            (generateAccessToken as jest.Mock).mockResolvedValueOnce("access_token");
+
+            const result = await auth_service.refreshToken("refresh_token");
+
+            expect(user_session_service.getUserSession).toHaveBeenCalledWith("refresh_token");
+            expect(verifyRefreshToken).toHaveBeenCalledWith("refresh_token");
+            expect(generateAccessToken).toHaveBeenCalledWith(TokenUser);
+            expect(result).toHaveProperty("access_token", "access_token");
+        });
+
+        it("should throw an error if refresh token is missing", async () => {
+            await expect(auth_service.refreshToken(""))
+                .rejects
+                .toThrow(new AppError(ERROR_MESSAGES.TOKEN_MISSING, HTTP_CODES.BAD_REQUEST));
+
+            expect(user_session_service.getUserSession).not.toHaveBeenCalled();
+            expect(verifyRefreshToken).not.toHaveBeenCalled();
+            expect(generateAccessToken).not.toHaveBeenCalled();
+        });
+
+        it("should throw an error if refresh token is invalid", async () => {
+            (user_session_service.getUserSession as jest.Mock).mockResolvedValueOnce(null);
+
+            await expect(auth_service.refreshToken("invalid_token"))
+                .rejects
+                .toThrow(new AppError(ERROR_MESSAGES.INVALID_REFRESH_TOKEN, HTTP_CODES.BAD_REQUEST));
+
+            expect(user_session_service.getUserSession).toHaveBeenCalledWith("invalid_token");
+            expect(verifyRefreshToken).not.toHaveBeenCalled();
+            expect(generateAccessToken).not.toHaveBeenCalled();
+        });
+
+        it("should throw an error if token verification fails", async () => {
+            (user_session_service.getUserSession as jest.Mock).mockResolvedValueOnce(mockRefreshUser);
+            (verifyRefreshToken as jest.Mock).mockRejectedValueOnce(
+                new AppError(ERROR_MESSAGES.INVALID_REFRESH_TOKEN, HTTP_CODES.UNAUTHORIZED)
+            );
+
+            await expect(auth_service.refreshToken("valid_refresh_token"))
+                .rejects
+                .toThrow(new AppError(ERROR_MESSAGES.INVALID_REFRESH_TOKEN, HTTP_CODES.UNAUTHORIZED));
+
+            expect(user_session_service.getUserSession).toHaveBeenCalledWith("valid_refresh_token");
+            expect(verifyRefreshToken).toHaveBeenCalledWith("valid_refresh_token");
+            expect(generateAccessToken).not.toHaveBeenCalled();
+        });
+
+        it("should throw an error if access token generation fails", async () => {
+            (user_session_service.getUserSession as jest.Mock).mockResolvedValueOnce(mockRefreshUser);
+            (verifyRefreshToken as jest.Mock).mockResolvedValueOnce(mockUser);
+            (generateAccessToken as jest.Mock).mockRejectedValueOnce(new Error("Token generation failed"));
+
+            await expect(auth_service.refreshToken("valid_refresh_token"))
+                .rejects
+                .toThrow("Token generation failed");
+
+            expect(user_session_service.getUserSession).toHaveBeenCalledWith("valid_refresh_token");
+            expect(verifyRefreshToken).toHaveBeenCalledWith("valid_refresh_token");
+            expect(generateAccessToken).toHaveBeenCalledWith(mockUser);
+        });
+    });
     describe("logout", () => {
         it("should logout user successfully", async () => {
             const mockUser = mocklogoutSession();
+
             (user_session_service.getUserSession as jest.Mock).mockResolvedValueOnce(mockUser);
             (user_session_service.deleteUserSession as jest.Mock).mockResolvedValueOnce(true);
-            const result = expect(await auth_service.logout("refresh_token"))
 
+            const result = await auth_service.logout("refresh_token");
 
             expect(user_session_service.getUserSession).toHaveBeenCalledWith("refresh_token");
-            expect(user_session_service.deleteUserSession).toHaveBeenCalledWith(mockUser);
-            expect(result).toHaveProperty("message");
+            expect(user_session_service.deleteUserSession).toHaveBeenCalledWith("refresh_token");
+            expect(result).toHaveProperty("message", "Successfully logged out");
+        });
+
+        it("should throw error if user session is not found", async () => {
+            (user_session_service.getUserSession as jest.Mock).mockResolvedValueOnce(null);
+
+            await expect(auth_service.logout("refresh_token")).rejects.toThrow(
+                new AppError(ERROR_MESSAGES.INVALID_REFRESH_TOKEN, HTTP_CODES.UNAUTHORIZED)
+            );
+
+            expect(user_session_service.getUserSession).toHaveBeenCalledWith("refresh_token");
 
         });
-        it("should handle failure in deleting user session", async () => {
 
-        });
+
+        it("should throw token missing error if no token is provided", async () => {
+            await expect(auth_service.logout("")).rejects.toThrow(
+                new AppError(ERROR_MESSAGES.TOKEN_MISSING, HTTP_CODES.UNAUTHORIZED)
+            );
+        })
     });
 });
+

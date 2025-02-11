@@ -7,7 +7,7 @@ import { Server } from "socket.io";
 export const chatSocket = (socket: Socket, io: Server, nsp: any) => {
     baseSocket(socket);
 
-    // all listeners will be there
+    
     socket.on('chatMessage', (msg: string) => {
         console.log(`[Chat Message]: ${msg}`);
         nsp.emit('receivedMessage', `Chat Echo: ${msg}`);
