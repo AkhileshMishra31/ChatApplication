@@ -9,7 +9,8 @@
     "start": "node dist/server.js",
     "prepare": "husky install",
     "test": "jest --coverage",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "start:migrate":"bash scripts/create_admin.sh"
   },
   "keywords": [],
   "author": "",
