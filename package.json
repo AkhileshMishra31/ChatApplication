@@ -10,7 +10,7 @@
     "prepare": "husky install",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
-    "start:migrate":"bash scripts/create_admin.sh"
+    "start:migrate": "bash scripts/create_admin.sh"
   },
   "keywords": [],
   "author": "",
@@ -36,6 +36,7 @@
     "prisma": "^5.22.0",
     "qrcode": "^1.5.4",
     "redis": "^4.7.0",
+    "redis-om": "^0.4.7",
     "socket.io": "^4.8.1",
     "speakeasy": "^2.0.0",
     "supertest": "^7.0.0",
