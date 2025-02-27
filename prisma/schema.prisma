@@ -28,6 +28,61 @@ model User {
   friendshipsReceived    Friends[]           @relation("FriendshipFriend")
 }
 
+model AppAdmin {
+  id          String      @id @default(uuid())
+  username    String      @unique
+  email       String      @unique
+  password    String
+  roleId      String
+  status      AdminStatus @default(ACTIVE)
+  createdById String?
+  creatorType CreatorType
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  createdBy     AppAdmin?  @relation("AdminCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAdmins AppAdmin[] @relation("AdminCreator")
+  role          Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+}
+
+model Role {
+  id             String           @id @default(uuid())
+  name           String           @unique
+  description    String?
+  role_type      RoleType         @default(SYSTEM)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  PermissionSets PermissionSets[]
+
+  appAdmins AppAdmin[]
+}
+
+model PermissionSets {
+  id                          String                        @id @unique @default(uuid())
+  roleId                      String
+  isDefault                   Boolean                       @default(false)
+  createdBy                   CreatorType                   @default(SYSTEM)
+  createdAt                   DateTime                      @default(now())
+  updatedAt                   DateTime                      @updatedAt
+  is_deleted                  Boolean                       @default(false)
+  Role                        Role                          @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  PermissionForPermissionSets PermissionsForPermissionSet[]
+
+  @@unique([roleId, isDefault])
+}
+
+model PermissionsForPermissionSet {
+  id        String   @id @unique @default(uuid())
+  action    String
+  subject   String
+  fields    String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  PermissionSet      PermissionSets @relation(fields: [permission_sets_id], references: [id], onDelete: Cascade)
+  permission_sets_id String
+}
+
 model OTPRequest {
   id         String    @id @default(uuid())
   otp        String
@@ -94,6 +149,11 @@ model Friends {
   @@unique([initiatorId, friendId])
 }
 
+enum AdminStatus {
+  ACTIVE
+  INACTIVE
+}
+
 enum FriendRequestStatus {
   PENDING
   ACCEPTED
@@ -128,4 +188,13 @@ enum ReadStatus {
   UNREAD
   READ
   DELETED
+}
+enum RoleType {
+  SYSTEM
+  GROUP
+}
+
+enum CreatorType {
+  SYSTEM
+  ADMIN
 }
