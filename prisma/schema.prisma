@@ -46,36 +46,42 @@ model AppAdmin {
 }
 
 model Role {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  description String?
-  role_type   RoleType @default(SYSTEM)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String           @id @default(uuid())
+  name           String           @unique
+  description    String?
+  role_type      RoleType         @default(SYSTEM)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  PermissionSets PermissionSets[]
 
   appAdmins AppAdmin[]
 }
 
-// model Permission {
-//   id          String   @id @default(uuid())
-//   name        String   @unique
-//   description String?
-//   createdAt   DateTime @default(now())
-//   updatedAt   DateTime @updatedAt
+model PermissionSets {
+  id                          String                        @id @unique @default(uuid())
+  roleId                      String
+  isDefault                   Boolean                       @default(false)
+  createdBy                   CreatorType                   @default(SYSTEM)
+  createdAt                   DateTime                      @default(now())
+  updatedAt                   DateTime                      @updatedAt
+  is_deleted                  Boolean                       @default(false)
+  Role                        Role                          @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  PermissionForPermissionSets PermissionsForPermissionSet[]
 
-//   rolePermissions RolePermission[]
-// }
+  @@unique([roleId, isDefault])
+}
 
-// model RolePermission {
-//   id           String @id @default(uuid())
-//   roleId       String
-//   permissionId String
+model PermissionsForPermissionSet {
+  id        String   @id @unique @default(uuid())
+  action    String
+  subject   String
+  fields    String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-//   role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-//   permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-
-//   @@unique([roleId, permissionId])
-// }
+  PermissionSet      PermissionSets @relation(fields: [permission_sets_id], references: [id], onDelete: Cascade)
+  permission_sets_id String
+}
 
 model OTPRequest {
   id         String    @id @default(uuid())

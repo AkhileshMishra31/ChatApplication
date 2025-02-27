@@ -1,15 +1,14 @@
-// const prisma = require("../db");
-// const dotenv = require("dotenv");
-// dotenv.config({ path: "../.env" });
-// import { } from "@prisma/client";
-// const { } = prisma
-// export const migrateRolesPermission = async () => {
-//     try {
-//         // first make permission for sytem admin
+import prisma from "../../src/utils/db"
+const dotenv = require("dotenv");
+dotenv.config({ path: "../.env" });
+import { } from "@prisma/client";
+import { DefaultPermissionSetForCSR } from "./default_permission_set_csr";
+const { } = prisma
+export const migrateRolesPermission = async () => {
+    try {
+       await DefaultPermissionSetForCSR();
 
-//         // make permission set for group admins and subadmin
-
-//     } catch {
-//         console.log("\x1b[31m--------------------- Default Roles Permission migration failed !!---------------------\x1b[0m");
-//     }
-// }
+    } catch {
+        console.log("\x1b[31m--------------------- Default Roles Permission migration failed !!---------------------\x1b[0m");
+    }
+}
