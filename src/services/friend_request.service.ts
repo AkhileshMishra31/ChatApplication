@@ -5,6 +5,8 @@ import { HTTP_CODES } from "../common/StatusCodes";
 import { Iuser } from "../interfaces/user.interface";
 import { user_service } from "./user.service";
 import { friend_service } from "./friends.service";
+import { w } from "@faker-js/faker/dist/airline-D6ksJFwG";
+import { paginated_query } from "../utils/pagination_utility";
 
 const { friendRequest: FriendRequest } = prisma;
 
@@ -83,6 +85,8 @@ const acceptFriendRequest = async (FriendRequestId: string, user: Iuser) => {
             receiverId: friendRequest.receiverId
         };
         await friend_service.addFriend(friends_payload, tx);
+        // initial chat with 0 messages
+        
         return { message: "Friend request accepted, and friendship created" };
     });
     return tx;
@@ -120,9 +124,83 @@ const cancelFriendRequest = async (FriendRequestId: string, user: Iuser) => {
     return request
 }
 
+const getAllFriendRequests = async (user: Iuser, page: number, itemNo: number, query: { startDate?: string; endDate?: string; username?: string; }) => {
+    let where_query = {};
+    const pagination_query = paginated_query(page, itemNo)
+    let date_query = {};
+    if (query.username) {
+        where_query = {
+            ...where_query,
+            sender: {
+                username: {
+                    contains: query.username,
+                    mode: "insensitive"
+                }
+            }
+        }
+    }
+    if (query.startDate && !query.endDate) {
+        date_query = {
+            createdAt: {
+                gte: new Date(Number(query.startDate))
+            }
+        };
+    } else if (query.endDate && !query.startDate) {
+        date_query = {
+            createdAt: {
+                lt: new Date(Number(query.endDate))
+            }
+        };
+    } else if (query.startDate && query.endDate) {
+        date_query = {
+            createdAt: {
+                gte: new Date(Number(query.startDate)),
+                lt: new Date(Number(query.endDate))
+            }
+        };
+    }
+    const friendRequest = await FriendRequest.findFirst({
+        where: {
+            ...where_query,
+            ...date_query,
+            receiverId: user.id,
+            status: "PENDING"
+        },
+        ...pagination_query,
+        orderBy: {
+            createdAt: 'desc',
+        },
+        select: {
+            sender: {
+                select: {
+                    id: true,
+                    username: true,
+                }
+            },
+            status: true,
+            createdAt: true,
+            updatedAt: true
+        }
+    });
+
+    const total_count = await FriendRequest.count({
+        where: {
+            ...where_query,
+            ...date_query,
+            receiverId: user.id,
+            status: "PENDING"
+        }
+    });
+    return {
+        friendRequest,
+        total_count
+    };
+}
+
 
 export const friend_request_service = {
     sendFriendRequest,
     acceptFriendRequest,
-    cancelFriendRequest
+    cancelFriendRequest,
+    getAllFriendRequests
 };

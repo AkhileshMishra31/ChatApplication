@@ -116,3 +116,16 @@ enum UserStatus {
   ONLINE
   OFFLINE
 }
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  FILE
+}
+
+enum ReadStatus {
+  UNREAD
+  READ
+  DELETED
+}

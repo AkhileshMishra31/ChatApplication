@@ -25,7 +25,7 @@ export const sendFriendRequest = async (req: Request, res: Response) => {
 
 export const acceptFriendRequest = async (req: Request, res: Response) => {
     const { FriendRequestId } = req.params;
-    const user = req.user as Iuser; 
+    const user = req.user as Iuser;
 
     const result = await friend_request_service.acceptFriendRequest(FriendRequestId, user);
 
@@ -35,9 +35,41 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
     });
 };
 
+const getAllFriendRequests = async (req: Request, res: Response) => {
+    const user = req.user as Iuser;
+    let page: number = parseInt(req.query.page as string);
+    let itemNo: number = parseInt(req.query.itemNo as string) || 10;
+    let query = {};
+    if (req.query.username) {
+        query = {
+            ...query,
+            username: req.query.username
+        }
+    };
+    if (req.query.startDate) {
+        query = {
+            ...query,
+            startDate: req.query.startDate
+        }
+    };
+    if (req.query.endDate) {
+        query = {
+            ...query,
+            endDate: req.query.endDate
+        }
+    };
+    const result = await friend_request_service.getAllFriendRequests(user, page, itemNo, query);
+    return res.status(HTTP_CODES.OK).json({
+        message: SUCCESS_MESSAGES.FRIEND_REQUEST_LIST,
+        data: result,
+    });
+}
+
+
 
 
 export const friend_request_controller = {
     sendFriendRequest: catchAsync(sendFriendRequest),
-    acceptFriendRequest: catchAsync(acceptFriendRequest)
+    acceptFriendRequest: catchAsync(acceptFriendRequest),
+    getAllFriendRequests: catchAsync(getAllFriendRequests)
 };
