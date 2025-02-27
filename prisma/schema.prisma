@@ -26,6 +26,11 @@ model User {
   receivedFriendRequests FriendRequest[]     @relation("Receiver")
   friendshipsInitiated   Friends[]           @relation("FriendshipInitiator")
   friendshipsReceived    Friends[]           @relation("FriendshipFriend")
+  Group                  Group[]
+  GroupParticipant       GroupParticipant[]
+  Message                Message[]
+  ChatParticipant        ChatParticipant[]
+  MessageReceipt         MessageReceipt[]
 }
 
 model AppAdmin {
@@ -54,7 +59,96 @@ model Role {
   updatedAt      DateTime         @updatedAt
   PermissionSets PermissionSets[]
 
-  appAdmins AppAdmin[]
+  appAdmins        AppAdmin[]
+  GroupParticipant GroupParticipant[]
+}
+
+model Group {
+  id              String   @id @default(uuid())
+  name            String
+  description     String?
+  profile_picture String?
+  createdById     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  createdBy    User               @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  participants GroupParticipant[]
+  chat         Chat[]
+}
+
+model GroupParticipant {
+  id       String   @id @default(uuid())
+  groupId  String
+  userId   String
+  roleId   String
+  joinedAt DateTime @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Role  Role  @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+}
+
+model Chat {
+  id        String   @id @default(uuid())
+  type      ChatType @default(DIRECT)
+  groupId   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages     Message[]
+  participants ChatParticipant[]
+  group        Group?            @relation(fields: [groupId], references: [id], onDelete: Cascade)
+}
+
+model ChatParticipant {
+  id                String   @id @default(uuid())
+  chatId            String
+  userId            String
+  lastReadMessageId String?
+  joinedAt          DateTime @default(now())
+
+  chat Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([chatId, userId])
+}
+
+model Message {
+  id          String        @id @default(uuid())
+  chatId      String
+  senderId    String
+  content     String?
+  messageType MessageType
+  status      MessageStatus @default(SENT)
+  replyToId   String?
+  deletedBy   String[]      @default([])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  sender User @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  chat   Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  replyTo Message?  @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: Cascade)
+  replies Message[] @relation("MessageReplies")
+
+  messageReceipts MessageReceipt[]
+}
+
+model MessageReceipt {
+  id         String     @id @default(uuid())
+  messageId  String
+  userId     String
+  status     ReadStatus @default(DELIVERED)
+  seenAt     DateTime?
+  readAt     DateTime?
+  notifiedAt DateTime?
+  message    Message    @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId]) 
 }
 
 model PermissionSets {
@@ -185,10 +279,12 @@ enum MessageType {
 }
 
 enum ReadStatus {
-  UNREAD
+  DELIVERED
   READ
-  DELETED
+  SEEN
+  NOTIFIED
 }
+
 enum RoleType {
   SYSTEM
   GROUP
@@ -197,4 +293,15 @@ enum RoleType {
 enum CreatorType {
   SYSTEM
   ADMIN
+}
+
+enum ChatType {
+  DIRECT
+  GROUP
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
 }

@@ -26,11 +26,12 @@ export const ERROR_MESSAGES = {
     TWOFA_CREATION_FAILED: "Failed to create two-factor authentication. Please try again later.",
     TWOFA_NOT_ENABLED: "Two-factor authentication is not enabled for this account.",
     FRIEND_ALREADY_EXIST: "Friend already exist.",
-    SELF_FRIEND_REQUEST:"You cannot send a friend request to yourself.",
-    FRIEND_REQUEST_ALREADY_SENT:"A friend request has already been sent to this user.",
-    FRIEND_REQUEST_ALREADY_ACCEPTED:"Friend request already accepted",
-    FRIEND_REQUEST_NOT_FOUND:"Friend request not found.",
-    FRIEND_REQUEST_UPDATED_FAILED:"Failed to update friend request.",
+    SELF_FRIEND_REQUEST: "You cannot send a friend request to yourself.",
+    FRIEND_REQUEST_ALREADY_SENT: "A friend request has already been sent to this user.",
+    FRIEND_REQUEST_ALREADY_ACCEPTED: "Friend request already accepted",
+    FRIEND_REQUEST_NOT_FOUND: "Friend request not found.",
+    FRIEND_REQUEST_UPDATED_FAILED: "Failed to update friend request.",
+    ROLE_NOT_FOUND: "Role not found.",
 
 };
 
