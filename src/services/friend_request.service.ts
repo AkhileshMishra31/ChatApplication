@@ -5,7 +5,7 @@ import { HTTP_CODES } from "../common/StatusCodes";
 import { Iuser } from "../interfaces/user.interface";
 import { user_service } from "./user.service";
 import { friend_service } from "./friends.service";
-import { w } from "@faker-js/faker/dist/airline-D6ksJFwG";
+import { chat_service } from "./chat.service"
 import { paginated_query } from "../utils/pagination_utility";
 
 const { friendRequest: FriendRequest } = prisma;
@@ -85,8 +85,8 @@ const acceptFriendRequest = async (FriendRequestId: string, user: Iuser) => {
             receiverId: friendRequest.receiverId
         };
         await friend_service.addFriend(friends_payload, tx);
-        // initial chat with 0 messages
-        
+        await chat_service.initiateChat(friendRequest.senderId, friendRequest.receiverId, tx);
+
         return { message: "Friend request accepted, and friendship created" };
     });
     return tx;
@@ -159,7 +159,7 @@ const getAllFriendRequests = async (user: Iuser, page: number, itemNo: number, q
             }
         };
     }
-    const friendRequest = await FriendRequest.findFirst({
+    const friendRequest = await FriendRequest.findMany({
         where: {
             ...where_query,
             ...date_query,

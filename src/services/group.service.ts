@@ -21,7 +21,7 @@ const createGroup = async (user: Iuser, payload: IGroup) => {
         throw new AppError(ERROR_MESSAGES.ROLE_NOT_FOUND, HTTP_CODES.INTERNAL_SERVER_ERROR)
     }
 
-    await Groups.create({
+    const group = await Groups.create({
         data: {
             name: payload.name,
             description: payload.description,
@@ -52,15 +52,10 @@ const createGroup = async (user: Iuser, payload: IGroup) => {
             chat: {
                 select: {
                     id: true,
-                    messages:{
+                    messages: {
                         select: {
                             id: true,
                             content: true,
-                            messageReceipts: {
-                                select:{
-                                    
-                                }
-                            }
                         },
                         orderBy: {
                             createdAt: 'desc'
@@ -71,11 +66,9 @@ const createGroup = async (user: Iuser, payload: IGroup) => {
             }
         }
     })
+
+    return group;
 }
-
-
-
-
 
 const group_service = {
     createGroup

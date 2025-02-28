@@ -7,7 +7,7 @@ import { HTTP_CODES } from "../common/StatusCodes";
 const { role: Role } = prisma;
 
 const getRoleByName = async (name: string) => {
-    const role = await Role.findFirst({
+    const role = await Role.findUnique({
         where: {
             name: name
         }

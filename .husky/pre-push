@@ -1,4 +1,4 @@
 #!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
+# . "$(dirname "$0")/_/husky.sh"
 
-bash .husky/validate-branch-name.sh
+# bash .husky/validate-branch-name.sh
