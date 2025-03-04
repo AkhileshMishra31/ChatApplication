@@ -105,6 +105,10 @@ const getFriendsList = async (page: number, itemNo: number, query: { name?: stri
     }
 }
 
+
+
+
+
 export const friend_service = {
     areFriends,
     addFriend,
