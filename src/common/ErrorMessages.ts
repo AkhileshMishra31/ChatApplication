@@ -33,6 +33,7 @@ export const ERROR_MESSAGES = {
     FRIEND_REQUEST_UPDATED_FAILED: "Failed to update friend request.",
     ROLE_NOT_FOUND: "Role not found.",
     CHAT_NOT_FOUND: "Chat not found.",
-    CHAT_NOT_CREATED: "CHAT_NOT_CREATED"
+    CHAT_NOT_CREATED: "CHAT_NOT_CREATED",
+    PROFILE_PICTURE_FAILED:"Profile picture not updated"
 };
 

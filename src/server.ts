@@ -1,6 +1,6 @@
 import express, { Express } from "express";
 import dotenv from "dotenv";
-import routes from "./routes";  
+ 
 import { errorHandler } from "./utils/errorHandler";
 import "express-async-errors"
 import logger from "./config/logger";
@@ -10,8 +10,10 @@ import "./redis/index"
 import { SocketInit } from "./sockets";
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import { AppRoutes } from "./routes";
+import path from "path";
 
-
+const router = express.Router();
 dotenv.config();
 
 const app: Express = express();
@@ -25,9 +27,13 @@ app.use(cors());
 
 
 app.use(cookieParser());
+app.use("/public", express.static(path.join(__dirname, "../public")));
 
 
-app.use("/api/v1", routes);
+AppRoutes(router)
+
+
+app.use("/api/v1", router);
 
 app.use(errorHandler)
 

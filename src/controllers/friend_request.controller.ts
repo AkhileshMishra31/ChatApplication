@@ -66,10 +66,23 @@ const getAllFriendRequests = async (req: Request, res: Response) => {
 }
 
 
+const cancelFriendRequest= async (req: Request, res: Response) => {
+    const { FriendRequestId } = req.params;
+    const user = req.user as Iuser;
+
+    const result = await friend_request_service.cancelFriendRequest(FriendRequestId, user);
+
+    return res.status(HTTP_CODES.OK).json({
+        message: SUCCESS_MESSAGES.FRIEND_REQUEST_CANCELLED,
+        data: result,
+    });
+}
+
 
 
 export const friend_request_controller = {
     sendFriendRequest: catchAsync(sendFriendRequest),
     acceptFriendRequest: catchAsync(acceptFriendRequest),
-    getAllFriendRequests: catchAsync(getAllFriendRequests)
+    getAllFriendRequests: catchAsync(getAllFriendRequests),
+    cancelFriendRequest: catchAsync(cancelFriendRequest)
 };

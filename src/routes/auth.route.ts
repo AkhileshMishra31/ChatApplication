@@ -1,14 +1,12 @@
 // src/routes/userRoutes.ts
-import express from "express";
+import { Router } from "express";
 import { auth_controller } from "../controllers/auth.controller";
 
-const router = express.Router();
+export default function (router: Router) {
+    router.route("/sign-up").post(auth_controller.signup);
+    router.route("/login").post(auth_controller.login);
+    router.route("/refresh-token").post(auth_controller.refreshToken);
+    router.route("/logout").post(auth_controller.logout)
+}
 
 
-router.post("/sign-up",auth_controller.signup),
-router.post("/login", auth_controller.login)
-router.post("/refresh-token", auth_controller.refreshToken)
-router.post("/logout", auth_controller.logout)
-
-
-export default router;

@@ -1,12 +1,10 @@
-// src/routes/userRoutes.ts
-import express from "express";
+import { Router } from "express";
 import { friend_request_controller } from "../controllers/friend_request.controller";
 import isAuthenticated from "../utils/isAuthenticated";
 
-const router = express.Router();
-
-
-router.post("/send-friend-request", isAuthenticated, friend_request_controller.sendFriendRequest)
-
-
-export default router;
+export default function (router: Router) {
+    router.route("/send-friend-request").post(isAuthenticated, friend_request_controller.sendFriendRequest);
+    router.route("/accept-friend-request").post(isAuthenticated, friend_request_controller.acceptFriendRequest);
+    router.route("/cancel-friend-request").post(isAuthenticated, friend_request_controller.cancelFriendRequest);
+    router.route("/get-friend-requests").get(isAuthenticated, friend_request_controller.getAllFriendRequests);
+}

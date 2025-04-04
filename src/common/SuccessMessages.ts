@@ -10,6 +10,7 @@ export const SUCCESS_MESSAGES = {
     FRIEND_REQUEST_ACCEPTED:"Friend request accepted.",
     FRIEND_REQUEST_REJECTED:"Friend request rejected.",
     FRIEND_REQUEST_LIST:"Friend request list fetched successfully.",
-
+    AVATAR_UPLOAD_SUCCESS:"Avatar uploaded successfully.",
+    FRIEND_REQUEST_CANCELLED:"Friend request cancelled successfully.",
 };
 

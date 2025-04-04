@@ -156,11 +156,38 @@ const listUsersRandomly = async (user: Iuser, query: { name?: string }) => {
     return ranked_users.slice(0, 20)
 }
 
+
+const updateProfilePicture = async (user_id: string, filePath: string) => {
+    const profile = await User.update({
+        where: {
+            id: user_id
+        },
+        data: {
+            profile_picture: filePath
+        },
+        select: {
+            id: true,
+            profile_picture: true
+        }
+    })
+
+    if (!profile) {
+        throw new AppError(ERROR_MESSAGES.PROFILE_PICTURE_FAILED, HTTP_CODES.BAD_REQUEST);
+    }
+
+    return profile;
+}
+
+
+
+
+
 export const user_service = {
     findUser,
     createUser,
     getUser,
     signUpUser,
     deleteUser,
-    listUsersRandomly
+    listUsersRandomly,
+    updateProfilePicture
 };

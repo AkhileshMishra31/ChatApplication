@@ -3,7 +3,7 @@ import Joi from 'joi';
 // Friend Request validation function
 export const validateFriendRequestInput = (value: any) => {
     const friendRequestSchema = Joi.object({
-        receiverId: Joi.number().integer().required()
+        receiverId: Joi.string().required()
             .messages({
                 'number.base': 'Receiver ID must be a valid number',
                 'number.integer': 'Receiver ID must be an integer',
